@@ -79,37 +79,37 @@ type oauthPayload struct {
 var domainRegEx = regexp.MustCompile(`^[A-Za-z0-9-.]+$`) // We're mostly interested in stopping paths; the http package handles the rest.
 var remappedDomains = map[string]string{}                // For use during development; populate in an init() function.
 
-const defaultDomain = "fleet-api.prd.na.vn.cloud.tesla.com"
+const defaultDomain = "fleet-api.prd.eu.vn.cloud.tesla.com"
 
 func (p *oauthPayload) domain() string {
-	if len(remappedDomains) > 0 {
-		for _, a := range p.Audiences {
-			if d, ok := remappedDomains[a]; ok {
-				return d
-			}
-		}
-	}
-	domain := defaultDomain
-	ouCodeMatch := fmt.Sprintf(".%s.", strings.ToLower(p.OUCode))
-	for _, u := range p.Audiences {
-		if strings.HasPrefix(u, "https://auth.tesla.") {
-			continue
-		}
-		d, _ := strings.CutPrefix(u, "https://")
-		d, _ = strings.CutSuffix(d, "/")
-		if !domainRegEx.MatchString(d) {
-			continue
-		}
+	// if len(remappedDomains) > 0 {
+	// 	for _, a := range p.Audiences {
+	// 		if d, ok := remappedDomains[a]; ok {
+	// 			return d
+	// 		}
+	// 	}
+	// }
+	// domain := defaultDomain
+	// ouCodeMatch := fmt.Sprintf(".%s.", strings.ToLower(p.OUCode))
+	// for _, u := range p.Audiences {
+	// 	if strings.HasPrefix(u, "https://auth.tesla.") {
+	// 		continue
+	// 	}
+	// 	d, _ := strings.CutPrefix(u, "https://")
+	// 	d, _ = strings.CutSuffix(d, "/")
+	// 	if !domainRegEx.MatchString(d) {
+	// 		continue
+	// 	}
 
-		if inet.ValidTeslaDomainSuffix(d) && strings.HasPrefix(d, "fleet-api.") {
-			domain = d
-			// Prefer domains that contain the ou_code (region)
-			if strings.Contains(domain, ouCodeMatch) {
-				return domain
-			}
-		}
-	}
-	return domain
+	// 	if inet.ValidTeslaDomainSuffix(d) && strings.HasPrefix(d, "fleet-api.") {
+	// 		domain = d
+	// 		// Prefer domains that contain the ou_code (region)
+	// 		if strings.Contains(domain, ouCodeMatch) {
+	// 			return domain
+	// 		}
+	// 	}
+	// }
+	return defaultDomain
 }
 
 // New returns an [Account] that can be used to fetch a [vehicle.Vehicle].
